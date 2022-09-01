@@ -110,4 +110,53 @@ module.exports = {
       res.status(500).json({ message: err.message || `Internal server error` });
     }
   },
+  actionEdit: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { pekerjaan, deskripsiPekerjaan } = req.body;
+
+      if (req.file) {
+        let tmp_path = req.file.path;
+        let originaExt = req.file.originalname.split(".")[req.file.originalname.split(".").length - 1];
+        let filename = req.file.filename + "." + originaExt;
+        let target_path = path.resolve(config.rootPath, `public/uploads/banner-pekerjaan/${filename}`);
+
+        const src = fs.createReadStream(tmp_path);
+        const dest = fs.createWriteStream(target_path);
+
+        src.pipe(dest);
+        src.on("end", async () => {
+          try {
+            const apiData = await Pekerjaan.findOne({ where: { id: id } });
+
+            let currentImage = `${config.rootPath}/public/uploads/banner-pekerjaan/${apiData.image}`;
+            if (fs.existsSync(currentImage)) {
+              fs.unlinkSync(currentImage);
+            }
+            await apiData.update(
+              {
+                pekerjaan,
+                deskripsiPekerjaan,
+                image: filename,
+              }
+            );
+            res.status(200).json({ msg: "success", data: apiData });
+          } catch (err) {
+            res.status(500).json({ message: err.message || `Internal server error` });
+          }
+        });
+      } else {
+        const apiData = await Pekerjaan.findOne({ where: { id: id } });
+        apiData.update(
+          {
+            pekerjaan,
+            deskripsiPekerjaan,
+          }
+        );
+        res.status(200).json({ msg: "success", data: apiData });
+      }
+    } catch (err) {
+      res.status(500).json({ message: err.message || `Internal server error` });
+    }
+  },
 }
