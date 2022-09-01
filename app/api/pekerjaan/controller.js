@@ -4,6 +4,7 @@ module.exports = {
   getPekerjaanFrontEnd: async (req, res, next) => {
     try {
       const result = await Pekerjaan.findAll({
+        status: 'Y',
         attributes: ['id', 'pekerjaan', 'image'],
       });
       res.status(200).json(result);
@@ -19,5 +20,13 @@ module.exports = {
     } catch (err) {
       res.status(500).json({ message: err.message || `Internal server error` });
     }
-  }
+  },
+  getPekerjaanBackend: async (req, res) => {
+    try {
+      const apiData = await Pekerjaan.findAll()
+      res.status(200).json(apiData);
+    } catch (err) {
+      res.status(500).json({ message: err.message || `Internal server error` });
+    }
+  },
 }
