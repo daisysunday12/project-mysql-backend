@@ -113,7 +113,7 @@ module.exports = {
   actionEdit: async (req, res) => {
     try {
       const { id } = req.params;
-      const { pekerjaan, deskripsiPekerjaan } = req.body;
+      const { pekerjaan, deskripsiPekerjaan, status } = req.body;
 
       if (req.file) {
         let tmp_path = req.file.path;
@@ -137,6 +137,7 @@ module.exports = {
               {
                 pekerjaan,
                 deskripsiPekerjaan,
+                status,
                 image: filename,
               }
             );
@@ -151,6 +152,7 @@ module.exports = {
           {
             pekerjaan,
             deskripsiPekerjaan,
+            status,
           }
         );
         res.status(200).json({ msg: "success", data: apiData });
