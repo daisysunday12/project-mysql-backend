@@ -4,7 +4,10 @@ module.exports = {
   getPekerjaanFrontEnd: async (req, res, next) => {
     try {
       const result = await Pekerjaan.findAll({
-        status: 'Y',
+        where:
+        {
+          status: 'Y',
+        },
         attributes: ['id', 'pekerjaan', 'image'],
       });
       res.status(200).json(result);
