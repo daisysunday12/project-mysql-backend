@@ -161,4 +161,22 @@ module.exports = {
       res.status(500).json({ message: err.message || `Internal server error` });
     }
   },
+  actionDelete: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const apiData = await Pekerjaan.findOne({
+        where: {
+          id: id,
+        }
+      });
+      apiData.destroy()
+      let currentFile = `${config.rootPath}/public/uploads/banner-pekerjaan/${apiData.image}`;
+      if (fs.existsSync(currentFile)) {
+        fs.unlinkSync(currentFile);
+      }
+      res.status(200).json({ message: "Data Berhasil Dihapus" });
+    } catch (err) {
+      res.status(500).json({ message: err.message || `Internal server error` });
+    }
+  },
 }
