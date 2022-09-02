@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     tahun: DataTypes.STRING,
     file: DataTypes.STRING,
     image: DataTypes.STRING,
-    pekerjaan_id: DataTypes.BIGINT,
+    pekerjaanId: DataTypes.BIGINT,
   }, {
     sequelize,
     modelName: 'Kandidat',
