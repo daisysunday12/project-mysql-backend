@@ -68,7 +68,7 @@ module.exports = {
       image: {
         type: Sequelize.STRING
       },
-      pekerjaan_id: {
+      pekerjaanId: {
         type: Sequelize.BIGINT,
         references: {
           model: 'pekerjaans',

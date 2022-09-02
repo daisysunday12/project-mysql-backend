@@ -7,6 +7,7 @@ var cors = require("cors");
 var usersRouter = require('./app/api/users/router');
 var authRouter = require('./app/api/auth/router');
 var pekerjaanRouter = require('./app/api/pekerjaan/router');
+var kandidatRouter = require('./app/api/kandidat/router');
 
 const URL = '/api/v1'
 
@@ -29,6 +30,7 @@ app.get('/', function (req, res) {
 app.use(`${URL}/users`, usersRouter);
 app.use(`${URL}/auth`, authRouter);
 app.use(`${URL}/pekerjaan`, pekerjaanRouter);
+app.use(`${URL}/kandidat`, kandidatRouter);
 
 app.use(function (req, res, next) {
   const err = new Error('Not Found');
