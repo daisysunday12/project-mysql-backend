@@ -213,4 +213,28 @@ module.exports = {
       });
     }
   },
+  actionDelete: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const apiData = await Kandidat.findOne({
+        where: { id: id }
+      });
+      apiData.destroy()
+      let currentFile = `${config.rootPath}/public/uploads/data-kandidat/file/${apiData.file}`;
+      if (fs.existsSync(currentFile)) {
+        fs.unlinkSync(currentFile);
+      }
+      let currentImage = `${config.rootPath}/public/uploads/data-kandidat/img/${apiData.image}`;
+      if (fs.existsSync(currentImage)) {
+        fs.unlinkSync(currentImage);
+      }
+      res.status(201).json({ msg: "data berhasil dihapus" });
+    } catch (err) {
+      return res.status(422).json({
+        error: 1,
+        message: err.message,
+        fields: err.errors,
+      });
+    }
+  },
 }
