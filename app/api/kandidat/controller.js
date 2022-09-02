@@ -33,4 +33,81 @@ module.exports = {
       res.status(500).json({ message: err.message || `Internal server error` });
     }
   },
+  actionCreate: async (req, res) => {
+    try {
+      const { pekerjaan, nama, tempat, tanggal, alamat, pendidikan, jurusan, sumber, jk, ketsumber, email, kab, prov, kewarganegaraan, notelp, lokasi, salary } = req.body;
+
+      if (req.file) {
+        let tmp_path = req.file.path;
+        let originaExt = req.file.originalname.split(".")[req.file.originalname.split(".").length - 1];
+        let filename = req.file.filename + "." + originaExt;
+        let target_path = path.resolve(config.rootPath, `public/uploads/data-kandidat/img/${filename}`);
+
+        const src = fs.createReadStream(tmp_path);
+        const dest = fs.createWriteStream(target_path);
+
+        src.pipe(dest);
+        src.on("end", async () => {
+          try {
+            const apiData = new Kandidat({
+              pekerjaanId: pekerjaan,
+              nama,
+              email,
+              lokasi,
+              jurusan,
+              tempat,
+              tanggallahir: tanggal,
+              alamat,
+              pendidikan,
+              jk,
+              salary,
+              sumberket: ketsumber,
+              sumber,
+              notelp,
+              kewarganegaraan,
+              prov,
+              kab,
+              image: filename,
+            });
+            await apiData.save();
+            res.status(201).json({ msg: "success", data: apiData });
+          } catch (err) {
+            return res.status(422).json({
+              error: 1,
+              message: err.message,
+              fields: err.errors,
+            });
+          }
+        });
+      } else {
+        const apiData = new Kandidat({
+          pekerjaanId: pekerjaan,
+          nama,
+          email,
+          lokasi,
+          jurusan,
+          tempat,
+          tanggallahir: tanggal,
+          alamat,
+          pendidikan,
+          jk,
+          salary,
+          sumberket: ketsumber,
+          sumber,
+          notelp,
+          kewarganegaraan,
+          prov,
+          kab,
+        });
+        await apiData.save();
+        res.status(201).json({ msg: "success", data: apiData });
+      }
+    } catch (err) {
+      return res.status(422).json({
+        error: 1,
+        message: err.message,
+        fields: err.errors,
+      });
+    }
+  },
 }
