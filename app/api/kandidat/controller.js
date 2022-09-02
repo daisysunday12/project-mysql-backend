@@ -162,4 +162,55 @@ module.exports = {
       });
     }
   },
+  actionPostFile: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      if (req.file) {
+        let tmp_path = req.file.path;
+        let originaExt = req.file.originalname.split(".")[req.file.originalname.split(".").length - 1];
+        let filename = req.file.filename + "." + originaExt;
+        let target_path = path.resolve(config.rootPath, `public/uploads/data-kandidat/file/${filename}`);
+
+        const src = fs.createReadStream(tmp_path);
+        const dest = fs.createWriteStream(target_path);
+
+        src.pipe(dest);
+        src.on("end", async () => {
+          try {
+            const apiData = await Kandidat.findOne({ where: { id: id } });
+
+            let currentImage = `${config.rootPath}/public/uploads/data-kandidat/file/${apiData.file}`;
+            if (fs.existsSync(currentImage)) {
+              fs.unlinkSync(currentImage);
+            }
+            await apiData.update(
+              {
+                file: filename,
+              }
+            );
+            res.status(201).json({ msg: "success", data: apiData });
+          } catch (err) {
+            return res.status(422).json({
+              error: 1,
+              message: err.message,
+              fields: err.errors,
+            });
+          }
+        });
+      } else {
+        return res.status(422).json({
+          error: 1,
+          message: err.message,
+          fields: err.errors,
+        });
+      }
+    } catch (err) {
+      return res.status(422).json({
+        error: 1,
+        message: err.message,
+        fields: err.errors,
+      });
+    }
+  },
 }
