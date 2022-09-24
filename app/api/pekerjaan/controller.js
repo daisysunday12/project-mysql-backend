@@ -9,7 +9,7 @@ module.exports = {
       const result = await Pekerjaan.findAll({
         where:
         {
-          status: 'Y',
+          status: 'aktif',
         },
         attributes: ['id', 'pekerjaan', 'image'],
       });
@@ -53,6 +53,7 @@ module.exports = {
             const apiData = new Pekerjaan({
               pekerjaan,
               deskripsiPekerjaan,
+              status: "tidak aktif",
               image: filename,
             });
             await apiData.save();
@@ -65,6 +66,7 @@ module.exports = {
         const apiData = new Pekerjaan({
           pekerjaan,
           deskripsiPekerjaan,
+          status: "tidak aktif",
         });
         await apiData.save();
         res.status(201).json({ msg: "success", data: apiData });

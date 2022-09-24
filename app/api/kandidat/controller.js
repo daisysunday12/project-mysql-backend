@@ -7,13 +7,52 @@ module.exports = {
   getAll: async (req, res, next) => {
     try {
       const result = await Kandidat.findAll({
-        attributes: ['id', 'nama', 'email', 'jk', 'tempat', 'tanggallahir', 'alamat', 'kab', 'prov', 'kewarganegaraan', 'notelp', 'pendidikan', 'jurusan', 'lokasi', 'sumber', 'sumberket', 'salary', 'bulan', 'tahun', 'file', 'image', 'createdAt'],
+        attributes: ['id', 'nama', 'email', 'jk', 'tempat', 'tanggallahir', 'alamat', 'kab', 'prov', 'kewarganegaraan', 'notelp', 'pendidikan', 'jurusan', 'lokasi', 'sumber', 'sumberket', 'salary', 'bulan', 'tahun', 'file', 'image', 'bulan', 'tahun', 'createdAt'],
         include: {
           model: Pekerjaan,
           attributes: ['id', 'pekerjaan'],
         },
       });
       res.status(200).json(result);
+    } catch (err) {
+      res.status(500).json({ message: err.message || `Internal server error` });
+    }
+  },
+  getKandidatPria: async (req, res, next) => {
+    try {
+      const result = await Kandidat.findAll({
+        where: {
+          jk: 'L'
+        }
+      });
+      res.status(200).json(result);
+    } catch (err) {
+      res.status(500).json({ message: err.message || `Internal server error` });
+    }
+  },
+  getKandidatWanita: async (req, res, next) => {
+    try {
+      const result = await Kandidat.findAndCountAll({
+        where: {
+          jk: 'P'
+        }
+      });
+      res.status(200).json(result);
+    } catch (err) {
+      res.status(500).json({ message: err.message || `Internal server error` });
+    }
+  },
+  kandidatDetailsFrontend: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const apiDetails = await Kandidat.findOne({
+        where: { id: id },
+        include: {
+          model: Pekerjaan,
+          attributes: ['id', 'pekerjaan', 'image']
+        }
+      });
+      res.status(200).json(apiDetails);
     } catch (err) {
       res.status(500).json({ message: err.message || `Internal server error` });
     }
